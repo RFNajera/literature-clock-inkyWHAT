@@ -6,12 +6,12 @@ Created on Tue Aug  7 17:16:50 2018
 @author: tafj0
 """
 import sys
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QSize,QCoreApplication
+#from PyQt5.QtGui import QIcon
+#from PyQt5.QtWidgets import QApplication
+#from PyQt5.QtCore import QCoreApplication
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget, QPushButton,QTextEdit, 
-    QHBoxLayout, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
+from PyQt5.QtWidgets import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
+
 import json
 import random
 import logging
