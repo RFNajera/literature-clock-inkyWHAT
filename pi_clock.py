@@ -8,9 +8,11 @@ Created on Tue Aug  7 17:16:50 2018
 import sys
 #from PyQt5.QtGui import QIcon
 #from PyQt5.QtWidgets import QApplication
-#from PyQt5.QtCore import QCoreApplication
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
+from PyQt5.QtCore import pyqtSlot,QTimer,QSize,Qt
+#from PyQt5.QtCore.Qt import AlignRight
+from PyQt5 import  QtWidgets
+from PyQt5.QtGui import QFont,QFontMetrics
+from PyQt5.QtWidgets import (QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
 
 import json
 import random
@@ -35,10 +37,16 @@ QWidget#optionsWidget{background-color:red; border:3px solid rgb(0, 255, 0);}
 """
 
 class MainWindow():
-    def __init__(self):
-         self.form=Form()
+    def __init__(self,argv):
+         if len(argv)>1:
+             fixedTime=argv[1]
+             log.info('Fixing time to {}'.format(fixedTime))
+         else:
+             fixedTime=''
+         self.form=Form(fixedTime=fixedTime)
          self.form.quitButton.clicked.connect(lambda:self.close())
          self.form.clock.quitWidget.button.clicked.connect(lambda:self.close())
+        
          self.form.show()
          log.info("Set up done")
     def close(self):
@@ -50,7 +58,7 @@ class quitW(QtWidgets.QWidget):
         QtWidgets.QPushButton.__init__(self)
         vlayout=QVBoxLayout()
         self.button=QtWidgets.QPushButton('Quit?')
-        self.font = QtGui.QFont()
+        self.font = QFont()
         self.font.setFamily("Times")
         self.font.setPointSize(40)
         self.font.setBold(False)
@@ -63,8 +71,8 @@ class quitW(QtWidgets.QWidget):
 
 
 class clockWidget(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        
+    def __init__(self, parent=None,fixedTime=''):
+        self.fixedTime=fixedTime
         self.default_quote_font_size=40
         self.default_author_font_size=37
         self.min_font_size=10
@@ -75,7 +83,7 @@ class clockWidget(QtWidgets.QWidget):
         self.setObjectName("clockWidget")
         self.setStyleSheet(myStyleSheet)
         vlayout=QVBoxLayout()
-        self.font = QtGui.QFont()
+        self.font = QFont()
         self.font.setFamily("Times")
         self.font.setPointSize(self.default_quote_font_size)
         self.font.setBold(False)
@@ -84,7 +92,7 @@ class clockWidget(QtWidgets.QWidget):
         self.timeLabel=QtWidgets.QTextEdit()
         self.timeLabel.setFixedSize(750, 400)
         self.timeLabel.setFont(self.font)
-        self.timeLabel.setAlignment(QtCore.Qt.AlignCenter)
+#        self.timeLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.timeLabel.setObjectName("timeLabel")
         self.timeLabel.setText("Some great quote goes here!")
         self.timeLabel.setReadOnly(True)
@@ -98,14 +106,14 @@ class clockWidget(QtWidgets.QWidget):
         vlayout.addWidget(self.stack)
         self.authLabel=QtWidgets.QTextEdit()
         self.authLabel.setFixedSize(681, 81)
-        self.fonta = QtGui.QFont()
+        self.fonta = QFont()
         self.fonta.setFamily("Times")
         self.fonta.setPointSize(self.default_author_font_size)
         self.authLabel.setFont(self.fonta)
-        self.authLabel.setAlignment(QtCore.Qt.AlignCenter)
+#        self.authLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.authLabel.setObjectName("authorLabel")
         self.authLabel.setText("Title, Author")
-        self.authLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.authLabel.setAlignment(Qt.AlignRight)
         self.authLabel.setReadOnly(True)
         vlayout.addWidget(self.authLabel)
         mainLayout = QGridLayout()
@@ -114,7 +122,7 @@ class clockWidget(QtWidgets.QWidget):
         self.setLayout(mainLayout)
         self.loadData()
         
-        self.timer = QtCore.QTimer(self)
+        self.timer = QTimer(self)
         self.timer.timeout.connect(self.Time)
         self.currentMin=61  #to ensure it triggers time diff check
         self.Time()
@@ -126,11 +134,11 @@ class clockWidget(QtWidgets.QWidget):
          self.timer.stop()
          event.accept()
          
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def toggleStack(self,event):
         print('toggle')
         self.stack.setCurrentIndex(1)
-        QtCore.QTimer.singleShot(3000,self.toggleStackOff)
+        QTimer.singleShot(3000,self.toggleStackOff)
     
     def toggleStackOff(self):    
         self.stack.setCurrentIndex(0)
@@ -160,24 +168,44 @@ class clockWidget(QtWidgets.QWidget):
         #set default font sizes - might get reduced later
         self.font.setPointSize(self.default_quote_font_size)
         self.timeLabel.setFont(self.font)
+  
         self.fonta.setPointSize(self.default_author_font_size)
         self.authLabel.setFont(self.fonta)
+  
+        if not self.fixedTime:
+            qt=self._getQuote(time_str)
+        else:
+            qt=self._getQuote(self.fixedTime)
+            log.debug('fixed time')
         
-        qt=self._getQuote(time_str)
         qstr="{:s} <b><em><font color =\"white\">{:s}</font></em></b> {:s}".format(qt['quote_first'],qt['quote_time_case'],qt['quote_last'])
         log.info(qstr)
         #self.timeLabel.setText(qstr)
         self.timeLabel.setHtml(qstr)
         authStr="- {:s}, <em><font color =\"white\">{:s}</font></em>".format(qt['title'],qt['author'])
         self.authLabel.setHtml(authStr)
-        self.authLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.authLabel.setAlignment(Qt.AlignRight)
+        log.info(authStr)
         
+        met=QFontMetrics(self.font)
+        bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
+        print(bb.height())
+        
+        met=QFontMetrics(self.fonta)
+        bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
+        print(bb)
         fs=self.default_quote_font_size
-       
+        log.debug('quote')
         while True:
             h=self.timeLabel.document().size().height()
+            met=QFontMetrics(self.font)
+            bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
+            h=bb.height()
+        
+            print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
             if h > self.timeLabel.size().height():
                 fs=fs-1
+                print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
@@ -186,30 +214,39 @@ class clockWidget(QtWidgets.QWidget):
                 #print(fs)
             else:
                 break
+        log.debug('author')
         fs=self.default_author_font_size
         while True:
             h=self.authLabel.document().size().height()
+            met=QFontMetrics(self.fonta)
+            bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
+            h=bb.height()
+        
+            
+            print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
+            
             if h > self.authLabel.size().height():
+                
                 fs=fs-1
+                print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
                 self.fonta.setPointSize(fs)
-                self.timeLabel.setFont(self.fonta)
+                self.authLabel.setFont(self.fonta)
                 
             else:
                 break
-            
-                
+       
          
 class Form(QtWidgets.QWidget):
     """ creates the main GUI form"""
-    def __init__(self, parent=None):
+    def __init__(self, parent=None,fixedTime=''):
         super(Form, self).__init__(parent)
        #self.showFullScreen()
         self.setObjectName("MainWindow")
         self.resize(800, 480)
-        self.setMaximumSize(QtCore.QSize(800, 480))
+        self.setMaximumSize(QSize(800, 480))
         self.setStyleSheet(myStyleSheet)
         vlayout=QVBoxLayout()
         self.quitButton = QtWidgets.QPushButton()
@@ -217,7 +254,7 @@ class Form(QtWidgets.QWidget):
         self.quitButton.setText("Quit")
         #vlayout.addWidget(self.quitButton)
         
-        self.clock=clockWidget()
+        self.clock=clockWidget(fixedTime=fixedTime)
         vlayout.addWidget(self.clock)
         
         mainLayout = QGridLayout()
@@ -230,6 +267,6 @@ if __name__ == "__main__":
      app = QApplication(sys.argv)
      log.info('Creating main window')
          
-     form = MainWindow()
+     form = MainWindow(sys.argv)
      
      sys.exit(app.exec_())
