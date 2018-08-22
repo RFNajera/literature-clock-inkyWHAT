@@ -6,12 +6,7 @@ Created on Tue Aug  7 17:16:50 2018
 @author: tafj0
 """
 import sys
-##from PyQt5.QtGui import QIcon
-##from PyQt5.QtWidgets import QApplication
-##from PyQt5.QtCore.Qt import AlignRight
-#from PyQt5.QtCore import pyqtSlot,QTimer,QSize,Qt
 from PyQt4.QtCore import pyqtSlot,QTimer,QSize,Qt
-##from PyQt5 import  QtWidgets
 from PyQt4.QtGui import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
 
 from PyQt4.QtGui import QFontMetrics
@@ -26,6 +21,7 @@ log = logging.getLogger(__name__)
 myStyleSheet="""QWidget{ background-color: black; border-radius: 0px; color: gray;}
 QPushButton{ border: 1px solid gray; color: gray; border-radius: 5px;background-color: rgb(20, 20, 20);padding-top: 5px;padding-bottom: 5px}
 QLabel{ border: 1px solid gray; color: gray;}
+QTextEdit{background-color: black;}
 QPushButton:checked { background-color: cyan;}
 QPushButton:pressed{ background-color: gray;}
 QGroupBox{ border: 1px solid grey; padding-top: 5px}
@@ -92,7 +88,7 @@ class clockWidget(QWidget):
         self.font.setWeight(50)
         #self.timeLabel= QtWidgets.QLabel()
         self.timeLabel=QTextEdit()
-        self.timeLabel.setFixedSize(750, 400)
+        self.timeLabel.setFixedSize(750,340)# 400)
         self.timeLabel.setFont(self.font)
 #        self.timeLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.timeLabel.setObjectName("timeLabel")
@@ -107,7 +103,7 @@ class clockWidget(QWidget):
         
         vlayout.addWidget(self.stack)
         self.authLabel=QTextEdit()
-        self.authLabel.setFixedSize(681, 81)
+        self.authLabel.setFixedSize(680, 81)
         self.fonta = QFont()
         self.fonta.setFamily("Times")
         self.fonta.setPointSize(self.default_author_font_size)
@@ -180,11 +176,11 @@ class clockWidget(QWidget):
             qt=self._getQuote(self.fixedTime)
             log.debug('fixed time')
         
-        qstr="{:s} <b><em><font color =\"white\">{:s}</font></em></b> {:s}".format(qt['quote_first'],qt['quote_time_case'],qt['quote_last'])
+        qstr=u"{:s} <b><em><font color =\"white\">{:s}</font></em></b> {:s}".format(qt['quote_first'],qt['quote_time_case'],qt['quote_last'])
         log.info(qstr)
         #self.timeLabel.setText(qstr)
         self.timeLabel.setHtml(qstr)
-        authStr="- {:s}, <em><font color =\"white\">{:s}</font></em>".format(qt['title'],qt['author'])
+        authStr=u"- {:s}, <em><font color =\"white\">{:s}</font></em>".format(qt['title'],qt['author'])
         self.authLabel.setHtml(authStr)
         self.authLabel.setAlignment(Qt.AlignRight)
         log.info(authStr)
