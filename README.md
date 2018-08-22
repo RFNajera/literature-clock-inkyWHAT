@@ -12,3 +12,7 @@ On the Raspberry pi
 
 download or clone the this repo and run `python pi_clock.py` for the downloads directory
 
+## Usage
+
+The app runs full screen and is designed for an 800x480 display. To quit, press/click anywhere to bring up the quit button.
+
