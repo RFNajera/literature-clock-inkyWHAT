@@ -6,14 +6,16 @@ Created on Tue Aug  7 17:16:50 2018
 @author: tafj0
 """
 import sys
-#from PyQt5.QtGui import QIcon
-#from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import pyqtSlot,QTimer,QSize,Qt
-#from PyQt5.QtCore.Qt import AlignRight
-#from PyQt5 import  QtWidgets
-from PyQt5.QtGui import QFont,QFontMetrics
-from PyQt5.QtWidgets import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
+##from PyQt5.QtGui import QIcon
+##from PyQt5.QtWidgets import QApplication
+##from PyQt5.QtCore.Qt import AlignRight
+#from PyQt5.QtCore import pyqtSlot,QTimer,QSize,Qt
+from PyQt4.QtCore import pyqtSlot,QTimer,QSize,Qt
+##from PyQt5 import  QtWidgets
+from PyQt4.QtGui import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
 
+from PyQt4.QtGui import QFontMetrics
+from PyQt4.QtGui import QFont
 import json
 import random
 import logging
@@ -243,7 +245,7 @@ class Form(QWidget):
     """ creates the main GUI form"""
     def __init__(self, parent=None,fixedTime=''):
         super(Form, self).__init__(parent)
-       #self.showFullScreen()
+        self.showFullScreen()
         self.setObjectName("MainWindow")
         self.resize(800, 480)
         self.setMaximumSize(QSize(800, 480))
