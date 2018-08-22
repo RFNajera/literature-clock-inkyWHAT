@@ -15,23 +15,14 @@ import json
 import random
 import logging
 from datetime import datetime
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 
 myStyleSheet="""QWidget{ background-color: black; border-radius: 0px; color: gray;}
 QPushButton{ border: 1px solid gray; color: gray; border-radius: 5px;background-color: rgb(20, 20, 20);padding-top: 5px;padding-bottom: 5px}
-QLabel{ border: 1px solid gray; color: gray;}
 QTextEdit{background-color: black;}
 QPushButton:checked { background-color: cyan;}
 QPushButton:pressed{ background-color: gray;}
-QGroupBox{ border: 1px solid grey; padding-top: 5px}
-QGroupBox::title {    subcontrol-origin: margin; subcontrol-position: top center; 
-   padding: 0 15px;
-color: gray;  }
-QWidget#tempWidget{  background-color: black ; color: gray;}
-QLabel#tempLabel{ background-color: black ; color: gray;}
-QLabel#timeLabel,QLabel#authorLabel{color: rgb(230, 230, 230)}
-QWidget#optionsWidget{background-color:red; border:3px solid rgb(0, 255, 0);}
 """
 
 class MainWindow():
@@ -86,7 +77,6 @@ class clockWidget(QWidget):
         self.font.setPointSize(self.default_quote_font_size)
         self.font.setBold(False)
         self.font.setWeight(50)
-        #self.timeLabel= QtWidgets.QLabel()
         self.timeLabel=QTextEdit()
         self.timeLabel.setFixedSize(750,340)# 400)
         self.timeLabel.setFont(self.font)
@@ -95,6 +85,7 @@ class clockWidget(QWidget):
         self.timeLabel.setText("Some great quote goes here!")
         self.timeLabel.setReadOnly(True)
         self.timeLabel.mousePressEvent=self.toggleStack
+        self.timeLabel.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.stack=QStackedWidget()
         self.stack.addWidget(self.timeLabel)
         self.quitWidget=quitW()
@@ -113,6 +104,7 @@ class clockWidget(QWidget):
         self.authLabel.setText("Title, Author")
         self.authLabel.setAlignment(Qt.AlignRight)
         self.authLabel.setReadOnly(True)
+        self.authLabel.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         vlayout.addWidget(self.authLabel)
         mainLayout = QGridLayout()
         mainLayout.addLayout(vlayout, 0, 1)
@@ -134,7 +126,7 @@ class clockWidget(QWidget):
          
     @pyqtSlot()
     def toggleStack(self,event):
-        print('toggle')
+        #print('toggle')
         self.stack.setCurrentIndex(1)
         QTimer.singleShot(3000,self.toggleStackOff)
     
@@ -185,13 +177,13 @@ class clockWidget(QWidget):
         self.authLabel.setAlignment(Qt.AlignRight)
         log.info(authStr)
         
-        met=QFontMetrics(self.font)
-        bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
-        print(bb.height())
+        #met=QFontMetrics(self.font)
+        #bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
+        #print(bb.height())
         
-        met=QFontMetrics(self.fonta)
-        bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
-        print(bb)
+        #met=QFontMetrics(self.fonta)
+        #bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
+        #print(bb)
         fs=self.default_quote_font_size
         log.debug('quote')
         while True:
@@ -200,10 +192,10 @@ class clockWidget(QWidget):
             bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
             h=bb.height()
         
-            print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
+            #print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
             if h > self.timeLabel.size().height():
                 fs=fs-1
-                print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
+                #print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
@@ -221,21 +213,24 @@ class clockWidget(QWidget):
             h=bb.height()
         
             
-            print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
+            #print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
             
             if h > self.authLabel.size().height():
                 
                 fs=fs-1
-                print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
+                #print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
                 self.fonta.setPointSize(fs)
                 self.authLabel.setFont(self.fonta)
-                
-            else:
+                #self.authLabel.setFontPointSize(10)
+            else:   #make the font a bit smaller still if possible
+                if fs>self.min_font_size+4:
+                    fs=fs-4
+                    self.fonta.setPointSize(fs)            
+                    self.authLabel.setFont(self.fonta) 
                 break
-       
          
 class Form(QWidget):
     """ creates the main GUI form"""
