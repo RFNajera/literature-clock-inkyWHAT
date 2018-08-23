@@ -8,7 +8,6 @@ Created on Tue Aug  7 17:16:50 2018
 import sys
 from PyQt4.QtCore import pyqtSlot,QTimer,QSize,Qt
 from PyQt4.QtGui import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
-
 from PyQt4.QtGui import QFontMetrics
 from PyQt4.QtGui import QFont
 import json
@@ -35,7 +34,7 @@ class MainWindow():
          self.form=Form(fixedTime=fixedTime)
          self.form.quitButton.clicked.connect(lambda:self.close())
          self.form.clock.quitWidget.button.clicked.connect(lambda:self.close())
-        
+         QApplication.setOverrideCursor(Qt.BlankCursor)
          self.form.show()
          log.info("Set up done")
     def close(self):
