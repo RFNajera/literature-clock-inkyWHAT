@@ -32,3 +32,6 @@ nohup python pi_clock.py &
 ```
 The `nohup` detaches the process from the terminal so you can log out and leave the app running.
 
+Or from your remote computer 
+`ssh pi@192.168.2.4 'export DISPLAY=:0; cd /home/pi/python/literature-clock;nohup python pi_clock.py >foo.out 2> foo.err </dev/null &'` (edit as needed)
+
