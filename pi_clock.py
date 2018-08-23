@@ -6,6 +6,7 @@ Created on Tue Aug  7 17:16:50 2018
 @author: tafj0
 """
 import sys
+import os
 from PyQt4.QtCore import pyqtSlot,QTimer,QSize,Qt
 from PyQt4.QtGui import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
 from PyQt4.QtGui import QFontMetrics
@@ -210,20 +211,15 @@ class clockWidget(QWidget):
             met=QFontMetrics(self.fonta)
             bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
             h=bb.height()
-        
-            
-            #print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
             
             if h > self.authLabel.size().height():
                 
                 fs=fs-1
-                #print('h {} fs {} labelsize {}'.format(h,fs,self.authLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
                 self.fonta.setPointSize(fs)
                 self.authLabel.setFont(self.fonta)
-                #self.authLabel.setFontPointSize(10)
             else:   #make the font a bit smaller still if possible
                 if fs>self.min_font_size+4:
                     fs=fs-4
@@ -244,7 +240,6 @@ class Form(QWidget):
         self.quitButton = QPushButton()
         self.quitButton.setFixedSize(20,20)
         self.quitButton.setText("Quit")
-        #vlayout.addWidget(self.quitButton)
         
         self.clock=clockWidget(fixedTime=fixedTime)
         vlayout.addWidget(self.clock)
@@ -256,6 +251,7 @@ class Form(QWidget):
 
 if __name__ == "__main__":
      app=0
+     os.chdir(sys.path[0]) #set cwd to this files location
      app = QApplication(sys.argv)
      log.info('Creating main window')
          
