@@ -10,9 +10,16 @@ On the Raspberry pi
 
 `sudo apt-get install python-qt4`
 
+or
+
+`sudo apt-get install python3-pyqt4` if you are running python 3.
+
+
 download or clone the this repo and run `python pi_clock.py` for the downloads directory
 
 ## Usage
 
 The app runs full screen and is designed for an 800x480 display. To quit, press/click anywhere to bring up the quit button.
+
+There's also a `.desktop` file. If you edit paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
 
