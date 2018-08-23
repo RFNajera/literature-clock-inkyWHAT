@@ -21,5 +21,14 @@ download or clone the this repo and run `python pi_clock.py` for the downloads d
 
 The app runs full screen and is designed for an 800x480 display. To quit, press/click anywhere to bring up the quit button.
 
-There's also a `.desktop` file. If you edit paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
+There's also a `.desktop` file. You can edit the paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
+
+### Starting the app via SSH.
+
+If you SSH into your pi like I do, by default the clock runs on my mac rather than the pi. Change the display settings:
+```
+export DISPLAY=:0
+nohup python pi_clock.py &
+```
+The `nohup` detaches the process from the terminal so you can log out and leave the app running.
 
