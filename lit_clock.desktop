@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Literature Clock
+Type=Application
+Comment=Python Literature Clock
+Categories=Application
+Path=/home/pi/python/literature-clock
+Exec=bash -c "python /home/pi/python/literature-clock/pi_clock.py"
+Terminal=false
+StartupNotify=false
+X-Desktop-File-Install-Version=0.23
