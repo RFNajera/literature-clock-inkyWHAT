@@ -17,11 +17,17 @@ or
 
 download or clone the this repo and run `python pi_clock.py` for the downloads directory
 
+![imgage of Raspberry pi](https://user-images.githubusercontent.com/11662863/44579489-78485100-a78e-11e8-88b5-2a9f23b51aae.JPG)
+
 ## Usage
 
 The app runs full screen and is designed for an 800x480 display. To quit, press/click anywhere to bring up the quit button.
 
 There's also a `.desktop` file. You can edit the paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
+
+### Autostarting at boot
+`chmod u+x pi_clock.py`
+add `@/home/pi/python/literature-clock/pi_clock.py` to the end of the file `~/.config/lxsession/LXDE-pi/autostart`
 
 ### Starting the app via SSH.
 
