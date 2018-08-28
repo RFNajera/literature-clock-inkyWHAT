@@ -27,7 +27,8 @@ There's also a `.desktop` file. You can edit the paths in the file for your syst
 
 ### Autostarting at boot
 `chmod u+x pi_clock.py`
-add `@/home/pi/python/literature-clock/pi_clock.py` to the end of the file `~/.config/lxsession/LXDE-pi/autostart`
+
+Then add `@/home/pi/python/literature-clock/pi_clock.py` to the end of the file `~/.config/lxsession/LXDE-pi/autostart`
 
 ### Starting the app via SSH.
 
