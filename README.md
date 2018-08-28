@@ -23,12 +23,14 @@ download or clone the this repo and run `python pi_clock.py` for the downloads d
 
 The app runs full screen and is designed for an 800x480 display. To quit, press/click anywhere to bring up the quit button.
 
-There's also a `.desktop` file. You can edit the paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
+There's also a `lit_clock.desktop` file. You can edit the paths in the file for your system, copy it into `~./Desktop` if you want to start the app from the desktop.
 
 ### Autostarting at boot
 `chmod u+x pi_clock.py`
 
 Then add `@/home/pi/python/literature-clock/pi_clock.py` to the end of the file `~/.config/lxsession/LXDE-pi/autostart`
+
+You'll need to edit the path depending on where you have downloaded the files to.
 
 ### Starting the app via SSH.
 
@@ -40,5 +42,5 @@ nohup python pi_clock.py &
 The `nohup` detaches the process from the terminal so you can log out and leave the app running.
 
 Or from your remote computer 
-`ssh pi@192.168.2.4 'export DISPLAY=:0; cd /home/pi/python/literature-clock;nohup python pi_clock.py >foo.out 2> foo.err </dev/null &'` (edit as needed)
+`ssh pi@192.168.2.4 'export DISPLAY=:0; cd /home/pi/python/literature-clock;nohup python pi_clock.py >foo.out 2> foo.err </dev/null &'` (edit IP address and file path as needed)
 
