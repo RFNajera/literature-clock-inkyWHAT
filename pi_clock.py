@@ -26,6 +26,7 @@ QPushButton:pressed{ background-color: gray;}
 """
 
 class MainWindow():
+    """The main window"""
     def __init__(self,argv):
          if len(argv)>1:
              fixedTime=argv[1]
@@ -43,6 +44,7 @@ class MainWindow():
          self.form.close()
          
 class quitW(QWidget):
+    """Define the quit button widget"""
     def __init__(self, parent=None):
         QPushButton.__init__(self)
         vlayout=QVBoxLayout()
@@ -60,6 +62,7 @@ class quitW(QWidget):
 
 
 class clockWidget(QWidget):
+    """The widget that displays the quote and author"""
     def __init__(self, parent=None,fixedTime=''):
         self.fixedTime=fixedTime
         self.default_quote_font_size=40
@@ -67,7 +70,7 @@ class clockWidget(QWidget):
         self.min_font_size=10
         
         QWidget.__init__(self)
-        log.debug("new temp/press created")
+        #set up the main quote area
         self.stackIndex=0
         self.setObjectName("clockWidget")
         self.setStyleSheet(myStyleSheet)
@@ -80,44 +83,42 @@ class clockWidget(QWidget):
         self.timeLabel=QTextEdit()
         self.timeLabel.setFixedSize(750,340)# 400)
         self.timeLabel.setFont(self.font)
-#        self.timeLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.timeLabel.setObjectName("timeLabel")
         self.timeLabel.setText("Some great quote goes here!")
         self.timeLabel.setReadOnly(True)
         self.timeLabel.mousePressEvent=self.toggleStack
         self.timeLabel.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        #we make this a stack widget so we can display the quit button and quote, dialog boxes are ugly with full screen apps
         self.stack=QStackedWidget()
         self.stack.addWidget(self.timeLabel)
         self.quitWidget=quitW()
         self.stack.addWidget(self.quitWidget)
         self.stack.setCurrentIndex(self.stackIndex)
-        
         vlayout.addWidget(self.stack)
+        #set up the author area
         self.authLabel=QTextEdit()
         self.authLabel.setFixedSize(680, 81)
         self.fonta = QFont()
         self.fonta.setFamily("Times")
         self.fonta.setPointSize(self.default_author_font_size)
         self.authLabel.setFont(self.fonta)
-#        self.authLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.authLabel.setObjectName("authorLabel")
         self.authLabel.setText("Title, Author")
         self.authLabel.setAlignment(Qt.AlignRight)
         self.authLabel.setReadOnly(True)
         self.authLabel.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         vlayout.addWidget(self.authLabel)
+        #add the layouts to the widget
         mainLayout = QGridLayout()
         mainLayout.addLayout(vlayout, 0, 1)
-        
         self.setLayout(mainLayout)
         self.loadData()
-        
+        #set up the timer to run every second
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.Time)
-        self.currentMin=61  #to ensure it triggers time diff check
+        self.currentMin=61  #to ensure it triggers time diff check at start up
         self.Time()
-        
-        self.timer.start(3000)
+        self.timer.start(1000)
         
     def closeEvent(self,event):
          log.debug("Form close event")
@@ -134,12 +135,13 @@ class clockWidget(QWidget):
         self.stack.setCurrentIndex(0)
     
     def Time(self):
-        #self.setTime('12:01')
+        #check to see if the minute has updated from last time, if so run setTime()
         if datetime.now().minute != self.currentMin:
             self.currentMin=datetime.now().minute
             self.setTime(datetime.now().strftime('%H:%M'))
             log.debug('Update min {}'.format(self.currentMin))
     def loadData(self):
+        #load the data from the json files into a dict. It would have been easier if it was one big file, but its a file per minute
         self.quote_data=dict()
         
         for hours in range(24):
@@ -152,6 +154,7 @@ class clockWidget(QWidget):
                 except Exception:
                     log.error('Cannot load {}'.format(filename))
     def _getQuote(self,time_str):
+        #get a select a quote for the time, some times have multiple quotes so pick one at random
         return random.choice(self.quote_data[time_str])
         
     def setTime(self,time_str):
@@ -161,29 +164,21 @@ class clockWidget(QWidget):
   
         self.fonta.setPointSize(self.default_author_font_size)
         self.authLabel.setFont(self.fonta)
-  
+        #fixTime is set from the command line as is for debug 
         if not self.fixedTime:
             qt=self._getQuote(time_str)
         else:
             qt=self._getQuote(self.fixedTime)
             log.debug('fixed time')
-        
+        #set up the html for the quotes and authors
         qstr=u"{:s} <b><em><font color =\"white\">{:s}</font></em></b> {:s}".format(qt['quote_first'],qt['quote_time_case'],qt['quote_last'])
         log.info(qstr)
-        #self.timeLabel.setText(qstr)
         self.timeLabel.setHtml(qstr)
         authStr=u"- {:s}, <em><font color =\"white\">{:s}</font></em>".format(qt['title'],qt['author'])
         self.authLabel.setHtml(authStr)
         self.authLabel.setAlignment(Qt.AlignRight)
         log.info(authStr)
-        
-        #met=QFontMetrics(self.font)
-        #bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
-        #print(bb.height())
-        
-        #met=QFontMetrics(self.fonta)
-        #bb=met.boundingRect(self.authLabel.geometry(),Qt.TextWordWrap,authStr)
-        #print(bb)
+        #now the tricky bit, resize the fonts for the quote and author text to ensure it fits into the text boxes
         fs=self.default_quote_font_size
         log.debug('quote')
         while True:
@@ -192,16 +187,13 @@ class clockWidget(QWidget):
             bb=met.boundingRect(self.timeLabel.geometry(),Qt.TextWordWrap,qstr)
             h=bb.height()
         
-            #print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
             if h > self.timeLabel.size().height():
                 fs=fs-1
-                #print('h {} fs {} labelsize {}'.format(h,fs,self.timeLabel.size().height()))
                 if fs <= self.min_font_size:
                     log.debug('Min font size reached')
                     break
                 self.font.setPointSize(fs)
                 self.timeLabel.setFont(self.font)
-                #print(fs)
             else:
                 break
         log.debug('author')
@@ -254,7 +246,5 @@ if __name__ == "__main__":
      os.chdir(sys.path[0]) #set cwd to this files location
      app = QApplication(sys.argv)
      log.info('Creating main window')
-         
      form = MainWindow(sys.argv)
-     
      sys.exit(app.exec_())
