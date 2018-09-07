@@ -2,7 +2,9 @@
 Clock using time quotes from the literature, based on work and idea by
         [Jaap Meijers](http://www.eerlijkemedia.nl/) ([E-reader clock](https://www.instructables.com/id/Literary-Clock-Made-From-E-reader/)) and the web version by [JohannesNE](https://github.com/JohannesNE/literature-clock).
 
-This fork runs on python using PyQt4 and is designed for the for using the Raspberry Pi 7" touch screen. 
+This fork runs on python using PyQt4 and is designed for the for using the Raspberry Pi 7" touch screen.
+
+**Note that some of the quotes are NSFW.** I'm working on a fix.
 
 ## Install
 
