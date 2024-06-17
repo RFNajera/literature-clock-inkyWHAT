@@ -7,10 +7,10 @@ Created on Tue Aug  7 17:16:50 2018
 """
 import sys
 import os
-from PyQt4.QtCore import pyqtSlot,QTimer,QSize,Qt
-from PyQt4.QtGui import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
-from PyQt4.QtGui import QFontMetrics
-from PyQt4.QtGui import QFont
+from PyQt5.QtCore import pyqtSlot,QTimer,QSize,Qt
+from PyQt5.QtWidgets import (QWidget,QPushButton, QTextEdit, QVBoxLayout, QApplication,QGridLayout,QStackedWidget)
+from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtGui import QFont
 import json
 import random
 import logging

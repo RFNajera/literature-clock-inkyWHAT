@@ -2,7 +2,7 @@
 Clock using time quotes from the literature, based on work and idea by
         [Jaap Meijers](http://www.eerlijkemedia.nl/) ([E-reader clock](https://www.instructables.com/id/Literary-Clock-Made-From-E-reader/)) and the web version by [JohannesNE](https://github.com/JohannesNE/literature-clock).
 
-This fork runs on python using PyQt4 and is designed for the for using the Raspberry Pi 7" touch screen.
+This fork runs on python using PyQt5 and is designed for the for using the Raspberry Pi 7" touch screen.
 
 **Note that some of the quotes are NSFW.** I'm working on a fix.
 
@@ -10,12 +10,7 @@ This fork runs on python using PyQt4 and is designed for the for using the Raspb
 
 On the Raspberry pi
 
-`sudo apt-get install python-qt4`
-
-or
-
-`sudo apt-get install python3-pyqt4` if you are running python 3.
-
+`sudo apt install python-pyqt5`
 
 download or clone the this repo and run `python pi_clock.py` for the downloads directory
 
