@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec 9 2024
+Edited on Tue Dec 10 2024
 
 @author: RFNajera
 """
@@ -17,11 +17,11 @@ inky_display = InkyWHAT("black")
 inky_display.set_border(inky_display.WHITE)
 
 # Paths and configurations
-FONT_PATH = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
+FONT_PATH = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 QUOTE_PATH = "docs/times"  # Path to the folder containing the time-based JSON files
 IMAGE_SIZE = (inky_display.WIDTH, inky_display.HEIGHT)
-FONT_SIZE_QUOTE = 24
-FONT_SIZE_AUTHOR = 18
+FONT_SIZE_QUOTE = 20
+FONT_SIZE_AUTHOR = 14
 FONT_SIZE_DATETIME = 12
 
 class LiteratureClock:
@@ -79,7 +79,7 @@ class LiteratureClock:
         draw = ImageDraw.Draw(img)
 
         # Quote text
-        quote_text = f"{quote['quote_first']} {quote['quote_time_case'].upper()} {quote['quote_last']}"
+        quote_text = f"{quote['quote_first']} {quote['quote_time_case']} {quote['quote_last']}"
         author_text = f"- {quote['title']}, {quote['author']}"
         margin = 10
         max_width = IMAGE_SIZE[0] - 2 * margin
@@ -91,8 +91,8 @@ class LiteratureClock:
         line_spacing = 10
 
         # Create fonts
-        font_quote = ImageFont.truetype(FONT_PATH, font_quote_size)
-        font_author = ImageFont.truetype(FONT_PATH, font_author_size)
+        font_quote = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", font_quote_size)
+        font_author = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSans.ttf", font_author_size)
 
         # Wrap the quote text into lines
         wrapped_lines = self.wrap_text(draw, quote_text, max_width, font_quote)
@@ -116,7 +116,15 @@ class LiteratureClock:
         # Render the wrapped quote text line by line
         y_offset = 30  # Leave space for the date/time at the top
         for line in wrapped_lines:
-            draw.text((margin, y_offset), line, fill=inky_display.BLACK, font=font_quote)
+            if quote['quote_time_case'] in line:
+                start = line.find(quote['quote_time_case'])
+                end = start + len(quote['quote_time_case'])
+                draw.text((margin, y_offset), line[:start], fill=inky_display.BLACK, font=font_quote)
+                highlight_font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf", font_quote_size)
+                draw.text((margin + draw.textbbox((0, 0), line[:start], font=font_quote)[2], y_offset), line[start:end], fill=inky_display.BLACK, font=highlight_font)
+                draw.text((margin + draw.textbbox((0, 0), line[:start] + line[start:end], font=highlight_font)[2], y_offset), line[end:], fill=inky_display.BLACK, font=font_quote)
+            else:
+                draw.text((margin, y_offset), line, fill=inky_display.BLACK, font=font_quote)
             y_offset += line_height
 
         # Render the author text at the bottom, left-aligned
@@ -129,7 +137,7 @@ class LiteratureClock:
 
         # Render the current date and time at the top-right corner
         now = datetime.now()
-        datetime_text = now.strftime("%Y-%m-%d %H:%M:%S")
+        datetime_text = now.strftime("%B %d, %Y")
         datetime_width = draw.textbbox((0, 0), datetime_text, font=self.font_datetime)[2]
         draw.text(
             (IMAGE_SIZE[0] - margin - datetime_width, margin),
