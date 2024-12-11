@@ -5,81 +5,105 @@ Edited on Tue Dec 10 2024
 
 @author: RFNajera
 """
-import os
-import json
-import random
-from datetime import datetime
-from inky import InkyWHAT
-from PIL import Image, ImageDraw, ImageFont
+Last login: Wed Dec 11 08:58:47 on ttys000
+rnajera@Renes-MacBook-Pro-M1 ~ % ssh rnajera@litclock.local
+rnajera@litclock.local's password: 
+Linux litclock 6.6.51+rpt-rpi-v7 #1 SMP Raspbian 1:6.6.51-1+rpt3 (2024-10-08) armv7l
 
-# Inky WHAT setup
-inky_display = InkyWHAT("black")
-inky_display.set_border(inky_display.WHITE)
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
 
-# Paths and configurations
-FONT_PATH = "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
-QUOTE_PATH = "docs/times"  # Path to the folder containing the time-based JSON files
-IMAGE_SIZE = (inky_display.WIDTH, inky_display.HEIGHT)
-FONT_SIZE_QUOTE = 20
-FONT_SIZE_AUTHOR = 14
-FONT_SIZE_DATETIME = 12
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Wed Dec 11 08:58:55 2024 from 192.168.86.43
+rnajera@litclock:~ $ ls
+Bookshelf  Desktop  Documents  Downloads  inky  literature-clock  Music  Pictures  Pimoroni  Public  Templates  Videos
+rnajera@litclock:~ $ cd literature-clock
+rnajera@litclock:~/literature-clock $ ls
+csv_to_json.R  LICENCE.md              lit_clock.desktop  log.txt      pi_clock_what3_copy.py  README.md  venv
+docs           litclock_annotated.csv  log_minute.txt     pi_clock.py  pi_clock_what3.py       temp.png
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+Traceback (most recent call last):
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 167, in <module>
+    clock.update_display()
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 154, in update_display
+    img = self.generate_image(quote, time_str)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 118, in generate_image
+    draw.text((margin + draw.textbbox((0, 0), line[:start] + line[start:end]-1, font=highlight_font)[2], y_offset), line[end:], fill=inky_display.BLACK, font=font_quote)
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+TypeError: unsupported operand type(s) for -: 'str' and 'int'
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+Traceback (most recent call last):
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 167, in <module>
+    clock.update_display()
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 154, in update_display
+    img = self.generate_image(quote, time_str)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rnajera/literature-clock/pi_clock_what3.py", line 118, in generate_image
+    draw.text((margin + draw.textbbox((0, 0), line[:start] + line[start:end] - 1, font=highlight_font)[2], y_offset), line[end:], fill=inky_display.BLACK, font=font_quote)
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+TypeError: unsupported operand type(s) for -: 'str' and 'int'
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ python3 pi_clock_what3.py
+rnajera@litclock:~/literature-clock $ sudo nano pi_clock_what3.py
 
-class LiteratureClock:
-    def __init__(self, fixed_time=None):
-        self.fixed_time = fixed_time
-        self.quote_data = self.load_quotes()
-        self.font_datetime = ImageFont.truetype(FONT_PATH, FONT_SIZE_DATETIME)
 
-    def load_quotes(self):
-        """Load all quotes from JSON files into a dictionary."""
-        quotes = {}
-        for hour in range(24):
-            for minute in range(60):
-                time_str = f"{hour:02d}:{minute:02d}"
-                file_path = os.path.join(QUOTE_PATH, f"{time_str}.json")
-                try:
-                    with open(file_path, "r") as file:
-                        quotes[time_str] = json.load(file)
-                except FileNotFoundError:
-                    pass
-        return quotes
 
-    def get_quote_for_time(self, time_str):
-        """Retrieve a random quote for the given time."""
-        if time_str in self.quote_data:
-            return random.choice(self.quote_data[time_str])
-        return {
-            "quote_first": "No quote available.",
-            "quote_time_case": "",
-            "quote_last": "",
-            "title": "N/A",
-            "author": "Unknown",
-        }
 
-    def wrap_text(self, draw, text, max_width, font):
-        """Wrap text to fit within the max width."""
-        words = text.split(" ")
-        lines = []
-        current_line = ""
-        for word in words:
-            test_line = f"{current_line} {word}".strip()
-            if draw.textbbox((0, 0), test_line, font=font)[2] <= max_width:
-                current_line = test_line
-            else:
-                lines.append(current_line)
-                current_line = word
-        if current_line:
-            lines.append(current_line)
-        return lines
 
-    def generate_image(self, quote, time_str):
-        """Generate an image for the Inky WHAT display with dynamic font scaling."""
-        # Create a blank image
-        img = Image.new("P", IMAGE_SIZE, color=inky_display.WHITE)
-        draw = ImageDraw.Draw(img)
 
-        # Quote text
-        quote_text = f"{quote['quote_first']} {quote['quote_time_case']} {quote['quote_last']}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  GNU nano 7.2                                                                      pi_clock_what3.py                                                                                
         author_text = f"- {quote['title']}, {quote['author']}"
         margin = 10
         max_width = IMAGE_SIZE[0] - 2 * margin
@@ -108,19 +132,19 @@ class LiteratureClock:
 
             # Reduce the font size and re-wrap text
             font_quote_size -= 1
-            if font_quote_size < 10:  # Set a minimum font size
+            if font_quote_size < 8:  # Set a minimum font size
                 break
             font_quote = ImageFont.truetype(FONT_PATH, font_quote_size)
             wrapped_lines = self.wrap_text(draw, quote_text, max_width, font_quote)
 
         # Render the wrapped quote text line by line
-        y_offset = 30  # Leave space for the date/time at the top
+        y_offset = (max_height - total_text_height) // 2 + 30  # Leave space for the date/time at the top
         for line in wrapped_lines:
             if quote['quote_time_case'] in line:
                 start = line.find(quote['quote_time_case'])
                 end = start + len(quote['quote_time_case'])
                 draw.text((margin, y_offset), line[:start], fill=inky_display.BLACK, font=font_quote)
-                highlight_font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf", font_quote_size)
+                highlight_font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeSansBold.ttf", font_quote_size)
                 draw.text((margin + draw.textbbox((0, 0), line[:start], font=font_quote)[2], y_offset), line[start:end], fill=inky_display.BLACK, font=highlight_font)
                 draw.text((margin + draw.textbbox((0, 0), line[:start] + line[start:end], font=highlight_font)[2], y_offset), line[end:], fill=inky_display.BLACK, font=font_quote)
             else:
@@ -137,7 +161,7 @@ class LiteratureClock:
 
         # Render the current date and time at the top-right corner
         now = datetime.now()
-        datetime_text = now.strftime("%B %d, %Y")
+        datetime_text = now.strftime("%B %d, %Y %H:%M")
         datetime_width = draw.textbbox((0, 0), datetime_text, font=self.font_datetime)[2]
         draw.text(
             (IMAGE_SIZE[0] - margin - datetime_width, margin),
